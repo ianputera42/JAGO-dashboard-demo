@@ -1,0 +1,2634 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAGO - Jejaring Aktif Gamifikasi Online</title>
+	<link rel="stylesheet" href="assets/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            box-sizing: border-box;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2196F3 0%, #4CAF50 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .login-screen.hidden {
+            display: none;
+        }
+
+        .login-container {
+            background: rgba(255,255,255,0.1);
+            padding: 3rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .login-logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .login-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .login-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.2);
+        }
+
+        .login-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-btn:hover {
+            background: white;
+            color: #2196F3;
+            transform: translateY(-2px);
+        }
+
+        .access-codes {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .access-codes h4 {
+            margin-bottom: 1rem;
+            color: #FFD700;
+        }
+
+        .code-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Main Dashboard */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2196F3 0%, #4CAF50 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-left p {
+            opacity: 0.9;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .user-info {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid white;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: white;
+            color: #2196F3;
+        }
+
+        .nav-tabs {
+            background: white;
+            padding: 0 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .nav-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-tab.active {
+            color: #2196F3;
+            border-bottom-color: #2196F3;
+        }
+
+        .nav-tab:hover {
+            color: #2196F3;
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        .content {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Dashboard Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2196F3;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .stat-card.enhanced {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .stat-card.enhanced .stat-number {
+            color: white;
+        }
+
+        .stat-card.enhanced .stat-label {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* Content Containers */
+        .content-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Forms */
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #2196F3, #4CAF50);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* XP Bar and Gamification */
+        .xp-container {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .xp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .xp-level {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2196F3;
+        }
+
+        .xp-points {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .xp-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .xp-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .xp-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .xp-text {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.level-up {
+            background: linear-gradient(135deg, #FFD700, #FF8C00);
+            animation: levelUpPulse 0.5s ease;
+        }
+
+        @keyframes levelUpPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Quiz Components */
+        .quiz-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .quiz-question {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-option {
+            padding: 1rem;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            background: #e3f2fd;
+            border-color: #2196F3;
+        }
+
+        .quiz-option.selected {
+            background: #2196F3;
+            color: white;
+            border-color: #2196F3;
+        }
+
+        .quiz-option.correct {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .quiz-option.incorrect {
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+
+        .quiz-item {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #2196F3;
+        }
+
+        .quiz-item h4 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .quiz-item p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Media Components */
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .media-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .media-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .media-embed {
+            width: 100%;
+            height: 200px;
+            border: none;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .media-info {
+            padding: 1.5rem;
+        }
+
+        .media-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .media-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .media-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Subject Filter */
+        .subject-filter {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .subject-btn {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .subject-btn.active {
+            background: #2196F3;
+            color: white;
+            border-color: #2196F3;
+        }
+
+        .subject-btn:hover {
+            border-color: #2196F3;
+            color: #2196F3;
+        }
+
+        .subject-btn.active:hover {
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .header-right {
+                text-align: center;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+
+            .nav-tabs {
+                padding: 0 1rem;
+                overflow-x: auto;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .media-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .login-container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Progress Bars */
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        /* Badges */
+        .badges-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-container">
+            <div class="login-logo">🎓</div>
+            <h1 class="login-title">JAGO</h1>
+            <p class="login-subtitle">Jejaring Aktif Gamifikasi Online</p>
+            
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label for="accessCode">Kode Akses:</label>
+                    <input type="text" id="accessCode" placeholder="Masukkan kode akses Anda" required>
+                </div>
+                <div class="form-group">
+                    <label for="userName">Nama:</label>
+                    <input type="text" id="userName" placeholder="Masukkan nama Anda" required>
+                </div>
+                <button type="submit" class="login-btn">Masuk ke Dashboard</button>
+            </form>
+
+            <div class="access-codes">
+                <h4>🔑 Kode Akses Demo:</h4>
+                <div class="code-item">
+                    <span>👨‍🎓 Siswa:</span>
+                    <strong>SISWA2024</strong>
+                </div>
+                <div class="code-item">
+                    <span>👩‍🏫 Guru Informatika:</span>
+                    <strong>GURU-INF</strong>
+                </div>
+                <div class="code-item">
+                    <span>👩‍🏫 Guru Matematika:</span>
+                    <strong>GURU-MAT</strong>
+                </div>
+                <div class="code-item">
+                    <span>👩‍🏫 Guru IPA:</span>
+                    <strong>GURU-IPA</strong>
+                </div>
+                <div class="code-item">
+                    <span>👨‍💼 Kepala Sekolah:</span>
+                    <strong>KEPSEK2024</strong>
+                </div>
+                <div class="code-item">
+                    <span>⚙️ Admin:</span>
+                    <strong>ADMIN2024</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard" id="mainDashboard">
+        <header class="header">
+            <div class="header-left">
+                <h1>🎓 JAGO Dashboard</h1>
+                <p>Jejaring Aktif Gamifikasi Online</p>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div><strong id="userRole">Role</strong></div>
+                    <div id="userNameDisplay">Nama User</div>
+                    <div id="userSubject" style="font-size: 0.9rem; opacity: 0.8;"></div>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <nav class="nav-tabs" id="navTabs">
+            <!-- Navigation will be populated based on role -->
+        </nav>
+
+        <main class="content" id="mainContent">
+            <!-- Content will be populated based on role and active tab -->
+        </main>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let currentTab = 'dashboard';
+        let quizData = JSON.parse(localStorage.getItem('quizData')) || [];
+        let mediaData = JSON.parse(localStorage.getItem('mediaData')) || [];
+        let attendanceData = JSON.parse(localStorage.getItem('attendanceData')) || [];
+        let studentData = JSON.parse(localStorage.getItem('studentData')) || [
+            {id: 1, name: 'Ahmad Rizki', class: 'X-1', xp: 1250, level: 5, badges: ['Pemula', 'Aktif']},
+            {id: 2, name: 'Siti Nurhaliza', class: 'X-1', xp: 2450, level: 8, badges: ['Pemula', 'Aktif', 'Juara']},
+            {id: 3, name: 'Budi Santoso', class: 'X-2', xp: 890, level: 3, badges: ['Pemula']},
+            {id: 4, name: 'Dewi Sartika', class: 'X-2', xp: 1650, level: 5, badges: ['Pemula', 'Aktif']}
+        ];
+
+        const accessCodes = {
+            'SISWA2024': { role: 'student', name: 'Siswa' },
+            'GURU-INF': { role: 'teacher', name: 'Guru', subject: 'Informatika' },
+            'GURU-MAT': { role: 'teacher', name: 'Guru', subject: 'Matematika' },
+            'GURU-IPA': { role: 'teacher', name: 'Guru', subject: 'IPA' },
+            'KEPSEK2024': { role: 'principal', name: 'Kepala Sekolah' },
+            'ADMIN2024': { role: 'admin', name: 'Administrator' }
+        };
+
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const accessCode = document.getElementById('accessCode').value.toUpperCase();
+            const userName = document.getElementById('userName').value;
+            
+            if (accessCodes[accessCode]) {
+                currentUser = {
+                    ...accessCodes[accessCode],
+                    userName: userName,
+                    accessCode: accessCode
+                };
+                
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainDashboard').classList.add('active');
+                
+                initializeDashboard();
+            } else {
+                alert('Kode akses tidak valid!');
+            }
+        });
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainDashboard').classList.remove('active');
+            document.getElementById('loginForm').reset();
+        }
+
+        function initializeDashboard() {
+            // Update user info
+            document.getElementById('userRole').textContent = currentUser.name;
+            document.getElementById('userNameDisplay').textContent = currentUser.userName;
+            document.getElementById('userSubject').textContent = currentUser.subject || '';
+            
+            // Setup navigation based on role
+            setupNavigation();
+            
+            // Load initial content
+            showTab('dashboard');
+        }
+
+        function setupNavigation() {
+            const navTabs = document.getElementById('navTabs');
+            let tabs = [];
+
+            switch(currentUser.role) {
+                case 'student':
+                    tabs = [
+                        { id: 'dashboard', icon: '📊', label: 'Dashboard' },
+                        { id: 'quiz', icon: '🧩', label: 'Kuis Interaktif' },
+                        { id: 'media', icon: '📚', label: 'Media Belajar' },
+                        { id: 'progress', icon: '📈', label: 'Progress Saya' },
+                        { id: 'attendance', icon: '✅', label: 'Absensi & Nilai' }
+                    ];
+                    break;
+                case 'teacher':
+                    tabs = [
+                        { id: 'dashboard', icon: '📊', label: 'Dashboard' },
+                        { id: 'quiz', icon: '🧩', label: 'Kelola Kuis' },
+                        { id: 'media', icon: '📚', label: 'Kelola Media' },
+                        { id: 'progress', icon: '📈', label: 'Progress Siswa' },
+                        { id: 'attendance', icon: '✅', label: 'Absensi & Nilai' },
+                        { id: 'reports', icon: '📋', label: 'Laporan' }
+                    ];
+                    break;
+                case 'principal':
+                    tabs = [
+                        { id: 'dashboard', icon: '📊', label: 'Dashboard' },
+                        { id: 'quiz', icon: '🧩', label: 'Kelola Kuis' },
+                        { id: 'media', icon: '📚', label: 'Kelola Media' },
+                        { id: 'progress', icon: '📈', label: 'Progress Siswa' },
+                        { id: 'attendance', icon: '✅', label: 'Absensi & Nilai' },
+                        { id: 'reports', icon: '📋', label: 'Laporan' }
+                    ];
+                    break;
+                case 'admin':
+                    tabs = [
+                        { id: 'dashboard', icon: '📊', label: 'Dashboard' },
+                        { id: 'users', icon: '👥', label: 'Kelola User' },
+                        { id: 'students', icon: '🎓', label: 'Kelola Siswa' },
+                        { id: 'content', icon: '🗂️', label: 'Kelola Konten' },
+                        { id: 'system', icon: '⚙️', label: 'Sistem' }
+                    ];
+                    break;
+            }
+
+            navTabs.innerHTML = tabs.map(tab => 
+                `<button class="nav-tab ${tab.id === 'dashboard' ? 'active' : ''}" onclick="showTab('${tab.id}')">
+                    ${tab.icon} ${tab.label}
+                </button>`
+            ).join('');
+        }
+
+        function showTab(tabName) {
+            currentTab = tabName;
+            
+            // Update nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            event?.target?.classList.add('active');
+            
+            // Load content based on role and tab
+            loadTabContent(tabName);
+        }
+
+        function loadTabContent(tabName) {
+            const content = document.getElementById('mainContent');
+            
+            switch(currentUser.role) {
+                case 'student':
+                    loadStudentContent(tabName, content);
+                    break;
+                case 'teacher':
+                case 'principal':
+                    loadTeacherContent(tabName, content);
+                    break;
+                case 'admin':
+                    loadAdminContent(tabName, content);
+                    break;
+            }
+        }
+
+        // Student Content
+        function loadStudentContent(tabName, content) {
+            switch(tabName) {
+                case 'dashboard':
+                    content.innerHTML = `
+                        ${getStudentXPContainer()}
+                        ${getStudentStats()}
+                        ${getStudentLeaderboard()}
+                        ${getStudentActivityChart()}
+                    `;
+                    initializeStudentCharts();
+                    break;
+                case 'quiz':
+                    content.innerHTML = getStudentQuizContent();
+                    break;
+                case 'media':
+                    content.innerHTML = getStudentMediaContent();
+                    break;
+                case 'progress':
+                    content.innerHTML = getStudentProgressContent();
+                    break;
+                case 'attendance':
+                    content.innerHTML = getStudentAttendanceContent();
+                    break;
+            }
+        }
+
+        function getStudentXPContainer() {
+            const student = studentData.find(s => s.name === currentUser.userName) || studentData[0];
+            const xpNeeded = (student.level + 1) * 300;
+            const currentLevelXP = student.level * 300;
+            const progressXP = student.xp - currentLevelXP;
+            const progressPercent = (progressXP / 300) * 100;
+
+            return `
+                <div class="xp-container">
+                    <div class="xp-header">
+                        <div class="xp-level">Level ${student.level}</div>
+                        <div class="xp-points">${student.xp} XP</div>
+                    </div>
+                    <div class="xp-bar">
+                        <div class="xp-progress" style="width: ${progressPercent}%"></div>
+                    </div>
+                    <div class="xp-text">
+                        ${xpNeeded - student.xp} XP untuk Level ${student.level + 1}
+                    </div>
+                    <div class="badges-container">
+                        ${student.badges.map(badge => `<div class="badge">${badge}</div>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function getStudentStats() {
+            return `
+                <div class="stats-grid">
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-number">12/15</div>
+                        <div class="stat-label">Tugas Selesai</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-number">94%</div>
+                        <div class="stat-label">Kehadiran Saya</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">Badge Saya</div>
+                    </div>
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-number">87</div>
+                        <div class="stat-label">Nilai Rata-rata</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getStudentLeaderboard() {
+            const sortedStudents = [...studentData].sort((a, b) => b.xp - a.xp);
+            
+            return `
+                <div class="content-container">
+                    <h3 class="section-title">🏆 Leaderboard Kelas</h3>
+                    ${sortedStudents.map((student, index) => `
+                        <div class="quiz-item" style="border-left-color: ${index < 3 ? ['#FFD700', '#C0C0C0', '#CD7F32'][index] : '#2196F3'}">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h4>#${index + 1} ${student.name} ${student.name === currentUser.userName ? '(Anda)' : ''}</h4>
+                                    <p>Level ${student.level} • ${student.badges.length} Badge • Kelas ${student.class}</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 1.2rem; font-weight: bold; color: #2196F3;">${student.xp} XP</div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function getStudentActivityChart() {
+            return `
+                <div class="content-container">
+                    <h3 class="section-title">📈 Aktivitas Pembelajaran Mingguan</h3>
+                    <canvas id="studentActivityChart" width="400" height="200"></canvas>
+                </div>
+            `;
+        }
+
+        function getStudentQuizContent() {
+            const subjects = ['Informatika', 'Matematika', 'IPA', 'Bahasa Indonesia'];
+            const subjectQuizzes = {
+                'Informatika': [
+                    { title: 'Algoritma Dasar', description: 'Kuis tentang konsep algoritma dan flowchart', questions: 10, completed: true, score: 85 },
+                    { title: 'Struktur Data', description: 'Array, Stack, dan Queue', questions: 8, completed: false, score: null }
+                ],
+                'Matematika': [
+                    { title: 'Fungsi Linear', description: 'Persamaan dan grafik fungsi linear', questions: 12, completed: true, score: 92 },
+                    { title: 'Trigonometri', description: 'Sin, Cos, Tan dan aplikasinya', questions: 15, completed: false, score: null }
+                ],
+                'IPA': [
+                    { title: 'Gerak Lurus', description: 'GLB dan GLBB', questions: 10, completed: true, score: 78 },
+                    { title: 'Energi dan Usaha', description: 'Konsep energi kinetik dan potensial', questions: 8, completed: false, score: null }
+                ],
+                'Bahasa Indonesia': [
+                    { title: 'Teks Eksposisi', description: 'Struktur dan ciri-ciri teks eksposisi', questions: 6, completed: true, score: 88 }
+                ]
+            };
+
+            return `
+                <div class="subject-filter">
+                    ${subjects.map((subject, index) => 
+                        `<button class="subject-btn ${index === 0 ? 'active' : ''}" onclick="filterQuizBySubject('${subject}')">${subject}</button>`
+                    ).join('')}
+                </div>
+                
+                <div id="quizBySubject">
+                    ${subjects.map((subject, index) => `
+                        <div class="subject-content ${index === 0 ? '' : 'hidden'}" data-subject="${subject}">
+                            <div class="content-container">
+                                <h3 class="section-title">🧩 Kuis ${subject}</h3>
+                                ${subjectQuizzes[subject].map(quiz => `
+                                    <div class="quiz-item">
+                                        <h4>${quiz.title}</h4>
+                                        <p>${quiz.description}</p>
+                                        <div class="quiz-meta">
+                                            <span>${quiz.questions} Soal</span>
+                                            <div>
+                                                ${quiz.completed ? 
+                                                    `<span style="color: #4CAF50;">✅ Selesai - Nilai: ${quiz.score}</span>` : 
+                                                    `<button class="btn" onclick="startQuiz('${quiz.title}')">Mulai Kuis</button>`
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function getStudentMediaContent() {
+            const subjects = ['Informatika', 'Matematika', 'IPA', 'Bahasa Indonesia'];
+            const subjectMedia = {
+                'Informatika': [
+                    { title: 'Video: Pengenalan Algoritma', type: 'Video', description: 'Materi dasar tentang algoritma dan pemrograman', creator: 'Pak Budi' },
+                    { title: 'Simulasi: Sorting Algorithm', type: 'Interaktif', description: 'Visualisasi algoritma pengurutan data', creator: 'Pak Budi' }
+                ],
+                'Matematika': [
+                    { title: 'Grafik Fungsi Interaktif', type: 'Simulasi', description: 'Tool untuk menggambar dan menganalisis fungsi', creator: 'Bu Sari' },
+                    { title: 'Video: Trigonometri', type: 'Video', description: 'Penjelasan lengkap tentang trigonometri', creator: 'Bu Sari' }
+                ],
+                'IPA': [
+                    { title: 'Simulasi Gerak', type: 'Interaktif', description: 'Eksperimen virtual gerak lurus', creator: 'Pak Andi' },
+                    { title: 'Video: Hukum Newton', type: 'Video', description: 'Penjelasan hukum-hukum Newton', creator: 'Pak Andi' }
+                ],
+                'Bahasa Indonesia': [
+                    { title: 'Contoh Teks Eksposisi', type: 'Dokumen', description: 'Kumpulan contoh teks eksposisi', creator: 'Bu Rina' }
+                ]
+            };
+
+            return `
+                <div class="subject-filter">
+                    ${subjects.map((subject, index) => 
+                        `<button class="subject-btn ${index === 0 ? 'active' : ''}" onclick="filterMediaBySubject('${subject}')">${subject}</button>`
+                    ).join('')}
+                </div>
+                
+                <div id="mediaBySubject">
+                    ${subjects.map((subject, index) => `
+                        <div class="subject-content ${index === 0 ? '' : 'hidden'}" data-subject="${subject}">
+                            <div class="content-container">
+                                <h3 class="section-title">📚 Media Belajar ${subject}</h3>
+                                <div class="media-grid">
+                                    ${subjectMedia[subject].map(media => `
+                                        <div class="media-card">
+                                            <div class="media-embed">
+                                                <div>
+                                                    ${media.type === 'Video' ? '🎥' : media.type === 'Interaktif' ? '🎮' : '📄'} 
+                                                    ${media.type}<br>
+                                                    ${media.title}
+                                                </div>
+                                            </div>
+                                            <div class="media-info">
+                                                <h3 class="media-title">${media.title}</h3>
+                                                <p class="media-description">${media.description}</p>
+                                                <div class="media-meta">
+                                                    <span>Oleh: ${media.creator}</span>
+                                                    <button class="btn" onclick="openMedia('${media.title}')">Buka</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function getStudentProgressContent() {
+            const student = studentData.find(s => s.name === currentUser.userName) || studentData[0];
+            
+            return `
+                <div class="stats-grid">
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-number">12/15</div>
+                        <div class="stat-label">Materi Selesai</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-number">85%</div>
+                        <div class="stat-label">Target Tercapai</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-number">24h</div>
+                        <div class="stat-label">Waktu Belajar</div>
+                    </div>
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-number">7</div>
+                        <div class="stat-label">Streak Hari</div>
+                    </div>
+                </div>
+
+                <div class="content-container">
+                    <h3 class="section-title">📈 Progress per Mata Pelajaran</h3>
+                    ${[
+                        {subject: 'Informatika', progress: 92, color: '#2196F3'},
+                        {subject: 'Matematika', progress: 78, color: '#4CAF50'},
+                        {subject: 'IPA', progress: 85, color: '#FF9800'},
+                        {subject: 'Bahasa Indonesia', progress: 88, color: '#9C27B0'}
+                    ].map(item => `
+                        <div style="margin-bottom: 2rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <span style="font-weight: 600;">${item.subject}</span>
+                                <span style="color: ${item.color}; font-weight: 600;">${item.progress}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${item.progress}%; background: ${item.color};"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="content-container">
+                    <h3 class="section-title">🏆 Badge Collection</h3>
+                    <div class="badges-container">
+                        ${student.badges.map(badge => `<div class="badge">${badge}</div>`).join('')}
+                        <div class="badge" style="background: #ccc; color: #666;">Rajin (Terkunci)</div>
+                        <div class="badge" style="background: #ccc; color: #666;">Juara (Terkunci)</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getStudentAttendanceContent() {
+            const studentAttendance = attendanceData.filter(a => a.name === currentUser.userName);
+            
+            return `
+                <div class="stats-grid">
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-number">94%</div>
+                        <div class="stat-label">Kehadiran Saya</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-number">18</div>
+                        <div class="stat-label">Hari Hadir</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-number">87.5</div>
+                        <div class="stat-label">Rata-rata Nilai</div>
+                    </div>
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-number">15</div>
+                        <div class="stat-label">Tugas Selesai</div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h3 class="section-title">📋 Riwayat Absensi & Nilai</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Mata Pelajaran</th>
+                                <th>Status</th>
+                                <th>Nilai</th>
+                                <th>Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024-01-15</td>
+                                <td>Informatika</td>
+                                <td><span style="color: #4CAF50;">✅ Hadir</span></td>
+                                <td>85</td>
+                                <td>Kuis Algoritma</td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-14</td>
+                                <td>Matematika</td>
+                                <td><span style="color: #4CAF50;">✅ Hadir</span></td>
+                                <td>92</td>
+                                <td>Ulangan Harian</td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-13</td>
+                                <td>IPA</td>
+                                <td><span style="color: #FF9800;">⚠️ Izin</span></td>
+                                <td>-</td>
+                                <td>Sakit</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // Teacher Content
+        function loadTeacherContent(tabName, content) {
+            switch(tabName) {
+                case 'dashboard':
+                    content.innerHTML = getTeacherDashboard();
+                    initializeTeacherCharts();
+                    break;
+                case 'quiz':
+                    content.innerHTML = getTeacherQuizContent();
+                    break;
+                case 'media':
+                    content.innerHTML = getTeacherMediaContent();
+                    break;
+                case 'progress':
+                    content.innerHTML = getTeacherProgressContent();
+                    break;
+                case 'attendance':
+                    content.innerHTML = getTeacherAttendanceContent();
+                    break;
+                case 'reports':
+                    content.innerHTML = getTeacherReportsContent();
+                    break;
+            }
+        }
+
+        function getTeacherDashboard() {
+            return `
+                <div class="stats-grid">
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-number">32</div>
+                        <div class="stat-label">Total Siswa</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-number">94%</div>
+                        <div class="stat-label">Kehadiran Rata-rata</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🧩</div>
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">Kuis Aktif</div>
+                    </div>
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-number">85.2</div>
+                        <div class="stat-label">Nilai Rata-rata</div>
+                    </div>
+                </div>
+
+                <div class="content-container">
+                    <h3 class="section-title">📈 Statistik Kelas ${currentUser.subject || ''}</h3>
+                    <canvas id="teacherStatsChart" width="400" height="200"></canvas>
+                </div>
+
+                <div class="content-container">
+                    <h3 class="section-title">🏆 Top Performers</h3>
+                    ${studentData.slice(0, 5).map((student, index) => `
+                        <div class="quiz-item">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h4>#${index + 1} ${student.name}</h4>
+                                    <p>Level ${student.level} • ${student.badges.length} Badge • Kelas ${student.class}</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 1.2rem; font-weight: bold; color: #2196F3;">${student.xp} XP</div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function getTeacherQuizContent() {
+            const teacherQuizzes = quizData.filter(q => q.subject === currentUser.subject);
+            
+            return `
+                <div class="form-container">
+                    <h3 class="section-title">➕ Buat Kuis Baru</h3>
+                    <form id="createQuizForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="quizTitle">Judul Kuis:</label>
+                                <input type="text" id="quizTitle" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="quizDescription">Deskripsi:</label>
+                                <input type="text" id="quizDescription" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="quizClass">Kelas:</label>
+                                <select id="quizClass" required>
+                                    <option value="">Pilih Kelas</option>
+                                    <option value="X-1">X-1</option>
+                                    <option value="X-2">X-2</option>
+                                    <option value="XI-1">XI-1</option>
+                                    <option value="XI-2">XI-2</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="quizQuestions">Jumlah Soal:</label>
+                                <input type="number" id="quizQuestions" min="1" max="50" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">Buat Kuis</button>
+                    </form>
+                </div>
+
+                <div class="content-container">
+                    <h3 class="section-title">📝 Kuis yang Dibuat</h3>
+                    <div id="teacherQuizList">
+                        ${teacherQuizzes.length > 0 ? teacherQuizzes.map(quiz => `
+                            <div class="quiz-item">
+                                <h4>${quiz.title}</h4>
+                                <p>${quiz.description}</p>
+                                <div class="quiz-meta">
+                                    <span>Kelas: ${quiz.class} • ${quiz.questions} Soal</span>
+                                    <div>
+                                        <button class="btn" onclick="viewQuizResults('${quiz.id}')">Lihat Hasil</button>
+                                        <button class="btn btn-secondary" onclick="editQuiz('${quiz.id}')">Edit</button>
+                                        <button class="btn btn-danger" onclick="deleteQuiz('${quiz.id}')">Hapus</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('') : '<p>Belum ada kuis yang dibuat.</p>'}
+                    </div>
+                </div>
+            `;
+        }
+
+        function getTeacherMediaContent() {
+            const teacherMedia = mediaData.filter(m => m.subject === currentUser.subject);
+            
+            return `
+                <div class="form-container">
+                    <h3 class="section-title">➕ Tambah Media Belajar</h3>
+                    <form id="createMediaForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mediaTitle">Judul Media:</label>
+                                <input type="text" id="mediaTitle" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="mediaType">Jenis Media:</label>
+                                <select id="mediaType" required>
+                                    <option value="">Pilih Jenis</option>
+                                    <option value="Video">Video</option>
+                                    <option value="Interaktif">Simulasi Interaktif</option>
+                                    <option value="Dokumen">Dokumen</option>
+                                    <option value="Presentasi">Presentasi</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="mediaDescription">Deskripsi:</label>
+                            <textarea id="mediaDescription" required></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mediaClass">Kelas:</label>
+                                <select id="mediaClass" required>
+                                    <option value="">Pilih Kelas</option>
+                                    <option value="X-1">X-1</option>
+                                    <option value="X-2">X-2</option>
+                                    <option value="XI-1">XI-1</option>
+                                    <option value="XI-2">XI-2</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="mediaUrl">URL/Link:</label>
+                                <input type="url" id="mediaUrl">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">Tambah Media</button>
+                    </form>
+                </div>
+
+                <div class="content-container">
+                    <h3 class="section-title">📚 Media yang Dibuat</h3>
+                    <div class="media-grid">
+                        ${teacherMedia.length > 0 ? teacherMedia.map(media => `
+                            <div class="media-card">
+                                <div class="media-embed">
+                                    <div>
+                                        ${media.type === 'Video' ? '🎥' : media.type === 'Interaktif' ? '🎮' : '📄'} 
+                                        ${media.type}<br>
+                                        ${media.title}
+                                    </div>
+                                </div>
+                                <div class="media-info">
+                                    <h3 class="media-title">${media.title}</h3>
+                                    <p class="media-description">${media.description}</p>
+                                    <div class="media-meta">
+                                        <span>Kelas: ${media.class}</span>
+                                        <div>
+                                            <button class="btn btn-secondary" onclick="editMedia('${media.id}')">Edit</button>
+                                            <button class="btn btn-danger" onclick="deleteMedia('${media.id}')">Hapus</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('') : '<p>Belum ada media yang dibuat.</p>'}
+                    </div>
+                </div>
+            `;
+        }
+
+        function getTeacherProgressContent() {
+            return `
+                <div class="stats-grid">
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-number">85%</div>
+                        <div class="stat-label">Rata-rata Progress</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-number">28/32</div>
+                        <div class="stat-label">Siswa Aktif</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-number">156</div>
+                        <div class="stat-label">Total Badge</div>
+                    </div>
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-number">+12%</div>
+                        <div class="stat-label">Peningkatan</div>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <h3 class="section-title">🔍 Filter Progress Siswa</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="progressClass">Kelas:</label>
+                            <select id="progressClass" onchange="filterStudentProgress()">
+                                <option value="">Semua Kelas</option>
+                                <option value="X-1">X-1</option>
+                                <option value="X-2">X-2</option>
+                                <option value="XI-1">XI-1</option>
+                                <option value="XI-2">XI-2</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="progressSubject">Mata Pelajaran:</label>
+                            <select id="progressSubject" onchange="filterStudentProgress()">
+                                <option value="">Semua Mapel</option>
+                                <option value="Informatika">Informatika</option>
+                                <option value="Matematika">Matematika</option>
+                                <option value="IPA">IPA</option>
+                                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h3 class="section-title">📋 Progress Siswa</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama Siswa</th>
+                                <th>Kelas</th>
+                                <th>Level</th>
+                                <th>XP</th>
+                                <th>Badge</th>
+                                <th>Progress</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentProgressTable">
+                            ${studentData.map(student => `
+                                <tr>
+                                    <td>${student.name}</td>
+                                    <td>${student.class}</td>
+                                    <td>Level ${student.level}</td>
+                                    <td>${student.xp} XP</td>
+                                    <td>${student.badges.length}</td>
+                                    <td>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: ${(student.xp / (student.level * 300)) * 100}%"></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-secondary" onclick="viewStudentDetail('${student.id}')">Detail</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getTeacherAttendanceContent() {
+            return `
+                <div class="stats-grid">
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-number">94%</div>
+                        <div class="stat-label">Kehadiran Hari Ini</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-number">30/32</div>
+                        <div class="stat-label">Siswa Hadir</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-number">87.5</div>
+                        <div class="stat-label">Rata-rata Nilai</div>
+                    </div>
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-number">25</div>
+                        <div class="stat-label">Tugas Terkumpul</div>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <h3 class="section-title">✅ Input Absensi Massal</h3>
+                    <form id="massAttendanceForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="attendanceClass">Kelas:</label>
+                                <select id="attendanceClass" required onchange="loadStudentsByClass()">
+                                    <option value="">Pilih Kelas</option>
+                                    <option value="X-1">X-1</option>
+                                    <option value="X-2">X-2</option>
+                                    <option value="XI-1">XI-1</option>
+                                    <option value="XI-2">XI-2</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="attendanceDate">Tanggal:</label>
+                                <input type="date" id="attendanceDate" required>
+                            </div>
+                        </div>
+                        <div id="studentAttendanceList" class="hidden">
+                            <h4>Daftar Siswa:</h4>
+                            <div id="studentCheckboxes"></div>
+                            <button type="submit" class="btn">Simpan Absensi</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="form-container">
+                    <h3 class="section-title">📝 Input Nilai</h3>
+                    <form id="gradeInputForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="gradeClass">Kelas:</label>
+                                <select id="gradeClass" required>
+                                    <option value="">Pilih Kelas</option>
+                                    <option value="X-1">X-1</option>
+                                    <option value="X-2">X-2</option>
+                                    <option value="XI-1">XI-1</option>
+                                    <option value="XI-2">XI-2</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="gradeType">Jenis Penilaian:</label>
+                                <select id="gradeType" required>
+                                    <option value="">Pilih Jenis</option>
+                                    <option value="Kuis">Kuis</option>
+                                    <option value="Tugas">Tugas</option>
+                                    <option value="UTS">UTS</option>
+                                    <option value="UAS">UAS</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gradeDescription">Deskripsi:</label>
+                            <input type="text" id="gradeDescription" placeholder="Contoh: Kuis Algoritma Dasar" required>
+                        </div>
+                        <button type="button" class="btn" onclick="showGradeInputTable()">Tampilkan Form Nilai</button>
+                    </form>
+                </div>
+
+                <div class="table-container">
+                    <h3 class="section-title">📊 Rekap Absensi & Nilai</h3>
+                    <div class="form-row" style="margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="filterClass">Filter Kelas:</label>
+                            <select id="filterClass" onchange="filterAttendanceData()">
+                                <option value="">Semua Kelas</option>
+                                <option value="X-1">X-1</option>
+                                <option value="X-2">X-2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama Siswa</th>
+                                <th>Kelas</th>
+                                <th>Hadir</th>
+                                <th>Sakit</th>
+                                <th>Izin</th>
+                                <th>Alpha</th>
+                                <th>Rata-rata Nilai</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${studentData.map(student => `
+                                <tr>
+                                    <td>${student.name}</td>
+                                    <td>${student.class}</td>
+                                    <td>18</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>85.5</td>
+                                    <td>
+                                        <button class="btn btn-secondary" onclick="viewStudentAttendance('${student.id}')">Detail</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getTeacherReportsContent() {
+            return `
+                <div class="stats-grid">
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-number">+12%</div>
+                        <div class="stat-label">Peningkatan Minat</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💬</div>
+                        <div class="stat-number">85%</div>
+                        <div class="stat-label">Interaksi Aktif</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-number">40%</div>
+                        <div class="stat-label">Efisiensi Kerja</div>
+                    </div>
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-number">92%</div>
+                        <div class="stat-label">Kepuasan Siswa</div>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <h3 class="section-title">📊 Generate Laporan</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reportType">Jenis Laporan:</label>
+                            <select id="reportType">
+                                <option value="attendance">Laporan Absensi</option>
+                                <option value="grades">Laporan Nilai</option>
+                                <option value="progress">Laporan Progress</option>
+                                <option value="badges">Laporan Badge</option>
+                                <option value="engagement">Laporan Engagement</option>
+                                <option value="comprehensive">Laporan Komprehensif</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="reportPeriod">Periode:</label>
+                            <select id="reportPeriod">
+                                <option value="week">Minggu Ini</option>
+                                <option value="month">Bulan Ini</option>
+                                <option value="semester">Semester Ini</option>
+                                <option value="year">Tahun Ini</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reportClass">Kelas:</label>
+                            <select id="reportClass">
+                                <option value="">Semua Kelas</option>
+                                <option value="X-1">X-1</option>
+                                <option value="X-2">X-2</option>
+                                <option value="XI-1">XI-1</option>
+                                <option value="XI-2">XI-2</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="reportSubject">Mata Pelajaran:</label>
+                            <select id="reportSubject">
+                                <option value="">Semua Mapel</option>
+                                <option value="Informatika">Informatika</option>
+                                <option value="Matematika">Matematika</option>
+                                <option value="IPA">IPA</option>
+                                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn" onclick="generateReport()">📊 Generate Laporan</button>
+                        <button class="btn btn-secondary" onclick="downloadReport()">📥 Download CSV</button>
+                        <button class="btn btn-warning" onclick="downloadPDF()">📄 Download PDF</button>
+                    </div>
+                </div>
+
+                <div class="content-container" id="reportPreview" style="display: none;">
+                    <h3 class="section-title">📋 Preview Laporan</h3>
+                    <div id="reportContent"></div>
+                </div>
+            `;
+        }
+
+        // Admin Content
+        function loadAdminContent(tabName, content) {
+            switch(tabName) {
+                case 'dashboard':
+                    content.innerHTML = getAdminDashboard();
+                    break;
+                case 'users':
+                    content.innerHTML = getAdminUsersContent();
+                    break;
+                case 'students':
+                    content.innerHTML = getAdminStudentsContent();
+                    break;
+                case 'content':
+                    content.innerHTML = getAdminContentContent();
+                    break;
+                case 'system':
+                    content.innerHTML = getAdminSystemContent();
+                    break;
+            }
+        }
+
+        function getAdminDashboard() {
+            return `
+                <div class="stats-grid">
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-number">128</div>
+                        <div class="stat-label">Total Siswa</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👩‍🏫</div>
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Total Guru</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🧩</div>
+                        <div class="stat-number">45</div>
+                        <div class="stat-label">Total Kuis</div>
+                    </div>
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-number">78</div>
+                        <div class="stat-label">Media Belajar</div>
+                    </div>
+                </div>
+
+                <div class="content-container">
+                    <h3 class="section-title">📊 Statistik Sistem</h3>
+                    <canvas id="adminStatsChart" width="400" height="200"></canvas>
+                </div>
+
+                <div class="content-container">
+                    <h3 class="section-title">🚨 Aktivitas Terbaru</h3>
+                    <div class="quiz-item">
+                        <h4>Guru Budi menambahkan kuis "Algoritma Dasar"</h4>
+                        <p>Informatika • Kelas X-1 • 2 jam yang lalu</p>
+                    </div>
+                    <div class="quiz-item">
+                        <h4>15 siswa menyelesaikan kuis "Fungsi Linear"</h4>
+                        <p>Matematika • Kelas X-2 • 3 jam yang lalu</p>
+                    </div>
+                    <div class="quiz-item">
+                        <h4>Guru Sari menambahkan media "Video Trigonometri"</h4>
+                        <p>Matematika • Semua Kelas • 5 jam yang lalu</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getAdminUsersContent() {
+            return `
+                <div class="form-container">
+                    <h3 class="section-title">➕ Tambah User Baru</h3>
+                    <form id="addUserForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="userRole">Role:</label>
+                                <select id="userRole" required onchange="toggleSubjectField()">
+                                    <option value="">Pilih Role</option>
+                                    <option value="teacher">Guru</option>
+                                    <option value="principal">Kepala Sekolah</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="userFullName">Nama Lengkap:</label>
+                                <input type="text" id="userFullName" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group" id="subjectGroup" style="display: none;">
+                                <label for="userSubject">Mata Pelajaran:</label>
+                                <select id="userSubject">
+                                    <option value="">Pilih Mata Pelajaran</option>
+                                    <option value="Informatika">Informatika</option>
+                                    <option value="Matematika">Matematika</option>
+                                    <option value="IPA">IPA</option>
+                                    <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                                    <option value="Bahasa Inggris">Bahasa Inggris</option>
+                                    <option value="Sejarah">Sejarah</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="userAccessCode">Kode Akses (Auto-generate):</label>
+                                <input type="text" id="userAccessCode" readonly>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">Tambah User</button>
+                    </form>
+                </div>
+
+                <div class="table-container">
+                    <h3 class="section-title">👥 Daftar User</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama</th>
+                                <th>Role</th>
+                                <th>Mata Pelajaran</th>
+                                <th>Kode Akses</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Budi Santoso</td>
+                                <td>Guru</td>
+                                <td>Informatika</td>
+                                <td>GURU-INF</td>
+                                <td><span style="color: #4CAF50;">Aktif</span></td>
+                                <td>
+                                    <button class="btn btn-secondary" onclick="editUser('1')">Edit</button>
+                                    <button class="btn btn-danger" onclick="deleteUser('1')">Hapus</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Sari Dewi</td>
+                                <td>Guru</td>
+                                <td>Matematika</td>
+                                <td>GURU-MAT</td>
+                                <td><span style="color: #4CAF50;">Aktif</span></td>
+                                <td>
+                                    <button class="btn btn-secondary" onclick="editUser('2')">Edit</button>
+                                    <button class="btn btn-danger" onclick="deleteUser('2')">Hapus</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Dr. Ahmad</td>
+                                <td>Kepala Sekolah</td>
+                                <td>-</td>
+                                <td>KEPSEK2024</td>
+                                <td><span style="color: #4CAF50;">Aktif</span></td>
+                                <td>
+                                    <button class="btn btn-secondary" onclick="editUser('3')">Edit</button>
+                                    <button class="btn btn-danger" onclick="deleteUser('3')">Hapus</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getAdminStudentsContent() {
+            return `
+                <div class="form-container">
+                    <h3 class="section-title">➕ Tambah Siswa</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <button class="btn" onclick="showSingleStudentForm()">Tambah 1 Siswa</button>
+                        <button class="btn btn-secondary" onclick="showBulkStudentForm()">Import Massal</button>
+                    </div>
+                    
+                    <div id="singleStudentForm">
+                        <form id="addStudentForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="studentName">Nama Siswa:</label>
+                                    <input type="text" id="studentName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="studentClass">Kelas:</label>
+                                    <select id="studentClass" required>
+                                        <option value="">Pilih Kelas</option>
+                                        <option value="X-1">X-1</option>
+                                        <option value="X-2">X-2</option>
+                                        <option value="XI-1">XI-1</option>
+                                        <option value="XI-2">XI-2</option>
+                                        <option value="XII-1">XII-1</option>
+                                        <option value="XII-2">XII-2</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="studentNIS">NIS:</label>
+                                    <input type="text" id="studentNIS" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="studentEmail">Email (Opsional):</label>
+                                    <input type="email" id="studentEmail">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn">Tambah Siswa</button>
+                        </form>
+                    </div>
+
+                    <div id="bulkStudentForm" class="hidden">
+                        <div class="alert alert-warning">
+                            <strong>Format CSV:</strong> Nama,Kelas,NIS,Email<br>
+                            Contoh: Ahmad Rizki,X-1,12345,ahmad@email.com
+                        </div>
+                        <form id="bulkImportForm">
+                            <div class="form-group">
+                                <label for="csvFile">File CSV:</label>
+                                <input type="file" id="csvFile" accept=".csv" required>
+                            </div>
+                            <button type="submit" class="btn">Import Siswa</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h3 class="section-title">🎓 Daftar Siswa</h3>
+                    <div class="form-row" style="margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="filterStudentClass">Filter Kelas:</label>
+                            <select id="filterStudentClass" onchange="filterStudents()">
+                                <option value="">Semua Kelas</option>
+                                <option value="X-1">X-1</option>
+                                <option value="X-2">X-2</option>
+                                <option value="XI-1">XI-1</option>
+                                <option value="XI-2">XI-2</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="searchStudent">Cari Siswa:</label>
+                            <input type="text" id="searchStudent" placeholder="Nama atau NIS" onkeyup="searchStudents()">
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama</th>
+                                <th>Kelas</th>
+                                <th>NIS</th>
+                                <th>Level</th>
+                                <th>XP</th>
+                                <th>Badge</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            ${studentData.map(student => `
+                                <tr>
+                                    <td>${student.name}</td>
+                                    <td>${student.class}</td>
+                                    <td>12${student.id.toString().padStart(3, '0')}</td>
+                                    <td>Level ${student.level}</td>
+                                    <td>${student.xp}</td>
+                                    <td>${student.badges.length}</td>
+                                    <td><span style="color: #4CAF50;">Aktif</span></td>
+                                    <td>
+                                        <button class="btn btn-secondary" onclick="editStudent('${student.id}')">Edit</button>
+                                        <button class="btn btn-danger" onclick="deleteStudent('${student.id}')">Hapus</button>
+                                        <button class="btn btn-warning" onclick="resetStudentProgress('${student.id}')">Reset</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getAdminContentContent() {
+            return `
+                <div class="stats-grid">
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">🧩</div>
+                        <div class="stat-number">45</div>
+                        <div class="stat-label">Total Kuis</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-number">78</div>
+                        <div class="stat-label">Media Belajar</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-number">1,234</div>
+                        <div class="stat-label">Data Absensi</div>
+                    </div>
+                    <div class="stat-card enhanced">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-number">567</div>
+                        <div class="stat-label">Total Badge</div>
+                    </div>
+                </div>
+
+                <div class="content-container">
+                    <h3 class="section-title">🗂️ Kelola Konten</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div class="stat-card" style="cursor: pointer;" onclick="showContentSection('quiz')">
+                            <div class="stat-icon">🧩</div>
+                            <h4>Kelola Kuis</h4>
+                            <p>Lihat dan hapus semua kuis yang dibuat guru</p>
+                        </div>
+                        <div class="stat-card" style="cursor: pointer;" onclick="showContentSection('media')">
+                            <div class="stat-icon">📚</div>
+                            <h4>Kelola Media</h4>
+                            <p>Lihat dan hapus semua media belajar</p>
+                        </div>
+                        <div class="stat-card" style="cursor: pointer;" onclick="showContentSection('attendance')">
+                            <div class="stat-icon">📊</div>
+                            <h4>Kelola Absensi</h4>
+                            <p>Lihat dan hapus data absensi & nilai</p>
+                        </div>
+                        <div class="stat-card" style="cursor: pointer;" onclick="showContentSection('badges')">
+                            <div class="stat-icon">🏆</div>
+                            <h4>Reset Badge</h4>
+                            <p>Reset progress dan badge siswa</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="contentSections">
+                    <!-- Content sections will be loaded here -->
+                </div>
+            `;
+        }
+
+        function getAdminSystemContent() {
+            return `
+                <div class="content-container">
+                    <h3 class="section-title">⚙️ Pengaturan Sistem</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="schoolName">Nama Sekolah:</label>
+                            <input type="text" id="schoolName" value="SMA Negeri 1 Jakarta">
+                        </div>
+                        <div class="form-group">
+                            <label for="academicYear">Tahun Ajaran:</label>
+                            <input type="text" id="academicYear" value="2024/2025">
+                        </div>
+                    </div>
+                    <button class="btn">Simpan Pengaturan</button>
+                </div>
+
+                <div class="content-container">
+                    <h3 class="section-title">🔄 Backup & Restore</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div class="stat-card" style="cursor: pointer;" onclick="backupData()">
+                            <div class="stat-icon">💾</div>
+                            <h4>Backup Data</h4>
+                            <p>Download semua data sistem</p>
+                        </div>
+                        <div class="stat-card" style="cursor: pointer;" onclick="restoreData()">
+                            <div class="stat-icon">📥</div>
+                            <h4>Restore Data</h4>
+                            <p>Upload dan restore data backup</p>
+                        </div>
+                        <div class="stat-card" style="cursor: pointer;" onclick="clearAllData()">
+                            <div class="stat-icon">🗑️</div>
+                            <h4>Reset Sistem</h4>
+                            <p>Hapus semua data (HATI-HATI!)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-container">
+                    <h3 class="section-title">📊 Statistik Sistem</h3>
+                    <canvas id="systemStatsChart" width="400" height="200"></canvas>
+                </div>
+
+                <div class="content-container">
+                    <h3 class="section-title">📋 Log Aktivitas</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Waktu</th>
+                                    <th>User</th>
+                                    <th>Aktivitas</th>
+                                    <th>Detail</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2024-01-15 14:30</td>
+                                    <td>Guru Budi</td>
+                                    <td>Membuat Kuis</td>
+                                    <td>Algoritma Dasar - Informatika</td>
+                                </tr>
+                                <tr>
+                                    <td>2024-01-15 13:45</td>
+                                    <td>Ahmad Rizki</td>
+                                    <td>Menyelesaikan Kuis</td>
+                                    <td>Fungsi Linear - Skor: 85</td>
+                                </tr>
+                                <tr>
+                                    <td>2024-01-15 12:20</td>
+                                    <td>Admin</td>
+                                    <td>Menambah Siswa</td>
+                                    <td>Dewi Sartika - Kelas X-2</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Utility Functions
+        function filterQuizBySubject(subject) {
+            document.querySelectorAll('.subject-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.subject-content').forEach(content => {
+                if (content.dataset.subject === subject) {
+                    content.classList.remove('hidden');
+                } else {
+                    content.classList.add('hidden');
+                }
+            });
+        }
+
+        function filterMediaBySubject(subject) {
+            document.querySelectorAll('.subject-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.subject-content').forEach(content => {
+                if (content.dataset.subject === subject) {
+                    content.classList.remove('hidden');
+                } else {
+                    content.classList.add('hidden');
+                }
+            });
+        }
+
+        function startQuiz(quizTitle) {
+            showNotification(`Memulai kuis: ${quizTitle}`, 'success');
+            // Add XP for starting quiz
+            addXP(10, 'Memulai Kuis!');
+        }
+
+        function openMedia(mediaTitle) {
+            showNotification(`Membuka media: ${mediaTitle}`, 'success');
+            // Add XP for accessing media
+            addXP(5, 'Mengakses Media!');
+        }
+
+        function addXP(amount, reason) {
+            if (currentUser.role !== 'student') return;
+            
+            // Update student data
+            const student = studentData.find(s => s.name === currentUser.userName);
+            if (student) {
+                student.xp += amount;
+                const newLevel = Math.floor(student.xp / 300) + 1;
+                if (newLevel > student.level) {
+                    student.level = newLevel;
+                    showNotification(`🎉 Level Up! Selamat mencapai Level ${newLevel}!`, 'level-up');
+                } else {
+                    showNotification(`+${amount} XP - ${reason}`, 'success');
+                }
+                localStorage.setItem('studentData', JSON.stringify(studentData));
+                
+                // Update XP display if on dashboard
+                if (currentTab === 'dashboard') {
+                    loadTabContent('dashboard');
+                }
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type} show`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Chart initialization functions
+        function initializeStudentCharts() {
+            const ctx = document.getElementById('studentActivityChart');
+            if (ctx) {
+                new Chart(ctx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+                        datasets: [{
+                            label: 'Aktivitas Harian',
+                            data: [3, 5, 2, 8, 6, 4, 1],
+                            borderColor: '#2196F3',
+                            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
+        }
+
+        function initializeTeacherCharts() {
+            const ctx = document.getElementById('teacherStatsChart');
+            if (ctx) {
+                new Chart(ctx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Kuis Selesai', 'Media Diakses', 'Kehadiran', 'Tugas Terkumpul'],
+                        datasets: [{
+                            label: 'Statistik',
+                            data: [85, 92, 94, 78],
+                            backgroundColor: ['#2196F3', '#4CAF50', '#FF9800', '#9C27B0']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, max: 100 } }
+                    }
+                });
+            }
+        }
+
+        // Form handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set today's date as default for attendance forms
+            const today = new Date().toISOString().split('T')[0];
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            dateInputs.forEach(input => {
+                if (!input.value) input.value = today;
+            });
+        });
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-generate access code when role changes
+            document.addEventListener('change', function(e) {
+                if (e.target.id === 'userRole') {
+                    const role = e.target.value;
+                    const subject = document.getElementById('userSubject')?.value;
+                    let code = '';
+                    
+                    switch(role) {
+                        case 'teacher':
+                            code = subject ? `GURU-${subject.substring(0,3).toUpperCase()}` : 'GURU-XXX';
+                            break;
+                        case 'principal':
+                            code = 'KEPSEK' + Math.floor(Math.random() * 1000);
+                            break;
+                        case 'admin':
+                            code = 'ADMIN' + Math.floor(Math.random() * 1000);
+                            break;
+                    }
+                    
+                    const codeInput = document.getElementById('userAccessCode');
+                    if (codeInput) codeInput.value = code;
+                }
+            });
+        });
+
+        // Additional utility functions for admin features
+        function toggleSubjectField() {
+            const role = document.getElementById('userRole').value;
+            const subjectGroup = document.getElementById('subjectGroup');
+            if (role === 'teacher') {
+                subjectGroup.style.display = 'block';
+            } else {
+                subjectGroup.style.display = 'none';
+            }
+        }
+
+        function showSingleStudentForm() {
+            document.getElementById('singleStudentForm').classList.remove('hidden');
+            document.getElementById('bulkStudentForm').classList.add('hidden');
+        }
+
+        function showBulkStudentForm() {
+            document.getElementById('singleStudentForm').classList.add('hidden');
+            document.getElementById('bulkStudentForm').classList.remove('hidden');
+        }
+
+        function showContentSection(section) {
+            const contentSections = document.getElementById('contentSections');
+            let content = '';
+            
+            switch(section) {
+                case 'quiz':
+                    content = `
+                        <div class="table-container">
+                            <h3 class="section-title">🧩 Semua Kuis</h3>
+                            <div style="margin-bottom: 1rem;">
+                                <button class="btn btn-danger" onclick="deleteAllQuizzes()">🗑️ Hapus Semua Kuis</button>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr><th>Judul</th><th>Mata Pelajaran</th><th>Pembuat</th><th>Kelas</th><th>Soal</th><th>Aksi</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Algoritma Dasar</td><td>Informatika</td><td>Pak Budi</td><td>X-1</td><td>10</td><td><button class="btn btn-danger" onclick="deleteQuiz('1')">Hapus</button></td></tr>
+                                    <tr><td>Fungsi Linear</td><td>Matematika</td><td>Bu Sari</td><td>X-2</td><td>12</td><td><button class="btn btn-danger" onclick="deleteQuiz('2')">Hapus</button></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    break;
+                case 'media':
+                    content = `
+                        <div class="table-container">
+                            <h3 class="section-title">📚 Semua Media Belajar</h3>
+                            <div style="margin-bottom: 1rem;">
+                                <button class="btn btn-danger" onclick="deleteAllMedia()">🗑️ Hapus Semua Media</button>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr><th>Judul</th><th>Jenis</th><th>Mata Pelajaran</th><th>Pembuat</th><th>Kelas</th><th>Aksi</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Video Algoritma</td><td>Video</td><td>Informatika</td><td>Pak Budi</td><td>X-1</td><td><button class="btn btn-danger" onclick="deleteMedia('1')">Hapus</button></td></tr>
+                                    <tr><td>Simulasi Fungsi</td><td>Interaktif</td><td>Matematika</td><td>Bu Sari</td><td>X-2</td><td><button class="btn btn-danger" onclick="deleteMedia('2')">Hapus</button></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    break;
+                case 'attendance':
+                    content = `
+                        <div class="content-container">
+                            <h3 class="section-title">📊 Kelola Data Absensi & Nilai</h3>
+                            <div style="margin-bottom: 1rem;">
+                                <button class="btn btn-danger" onclick="deleteAllAttendance()">🗑️ Hapus Semua Data Absensi</button>
+                                <button class="btn btn-warning" onclick="resetAllGrades()">🔄 Reset Semua Nilai</button>
+                            </div>
+                            <div class="alert alert-warning">
+                                <strong>Peringatan:</strong> Tindakan ini akan menghapus semua data absensi dan nilai siswa secara permanen!
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'badges':
+                    content = `
+                        <div class="content-container">
+                            <h3 class="section-title">🏆 Reset Progress & Badge Siswa</h3>
+                            <div style="margin-bottom: 1rem;">
+                                <button class="btn btn-warning" onclick="resetAllProgress()">🔄 Reset Semua Progress</button>
+                                <button class="btn btn-danger" onclick="resetAllBadges()">🗑️ Hapus Semua Badge</button>
+                            </div>
+                            <div class="alert alert-danger">
+                                <strong>Peringatan:</strong> Tindakan ini akan mereset semua XP, Level, dan Badge siswa ke kondisi awal!
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            contentSections.innerHTML = content;
+        }
+
+        // Admin action functions
+        function deleteAllQuizzes() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA kuis? Tindakan ini tidak dapat dibatalkan!')) {
+                quizData = [];
+                localStorage.setItem('quizData', JSON.stringify(quizData));
+                showNotification('Semua kuis berhasil dihapus!', 'success');
+                showContentSection('quiz');
+            }
+        }
+
+        function deleteAllMedia() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA media belajar? Tindakan ini tidak dapat dibatalkan!')) {
+                mediaData = [];
+                localStorage.setItem('mediaData', JSON.stringify(mediaData));
+                showNotification('Semua media belajar berhasil dihapus!', 'success');
+                showContentSection('media');
+            }
+        }
+
+        function deleteAllAttendance() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data absensi dan nilai? Tindakan ini tidak dapat dibatalkan!')) {
+                attendanceData = [];
+                localStorage.setItem('attendanceData', JSON.stringify(attendanceData));
+                showNotification('Semua data absensi berhasil dihapus!', 'success');
+                showContentSection('attendance');
+            }
+        }
+
+        function resetAllProgress() {
+            if (confirm('Apakah Anda yakin ingin mereset SEMUA progress siswa? Tindakan ini tidak dapat dibatalkan!')) {
+                studentData.forEach(student => {
+                    student.xp = 0;
+                    student.level = 1;
+                });
+                localStorage.setItem('studentData', JSON.stringify(studentData));
+                showNotification('Semua progress siswa berhasil direset!', 'success');
+            }
+        }
+
+        function resetAllBadges() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA badge siswa? Tindakan ini tidak dapat dibatalkan!')) {
+                studentData.forEach(student => {
+                    student.badges = ['Pemula'];
+                });
+                localStorage.setItem('studentData', JSON.stringify(studentData));
+                showNotification('Semua badge siswa berhasil direset!', 'success');
+            }
+        }
+
+        function backupData() {
+            const backupData = {
+                students: studentData,
+                quizzes: quizData,
+                media: mediaData,
+                attendance: attendanceData,
+                timestamp: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(backupData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `jago_backup_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showNotification('Backup data berhasil didownload!', 'success');
+        }
+
+        function clearAllData() {
+            if (confirm('PERINGATAN: Ini akan menghapus SEMUA data sistem! Apakah Anda yakin?')) {
+                if (confirm('Konfirmasi sekali lagi: SEMUA data akan hilang permanen!')) {
+                    localStorage.clear();
+                    location.reload();
+                }
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9919f4ea2714811b',t:'MTc2MDk3ODQyMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+<script src="assets/script.js"></script>
+</body>
+</html>
